@@ -1,28 +1,34 @@
+// Dokümantasyonda belirtilen import
 import iziToast from 'izitoast';
+// Stil importu
 import 'izitoast/dist/css/iziToast.min.css';
-import { createList,showLoader,hideLoader,clearGallery } from './js/functions.js';
-import { pullImgs } from './js/pixabay_api.js';
+// Dokümantasyonda belirtilen import
+import { renderImages,showLoader,hideLoader,clearGallery } from './js/render-functions.js';
+import { fetchImages } from './js/pixabay-api.js';
+
 
 const form = document.querySelector('.form');
 
-form.addEventListener('submit', e =>{
-    e.preventDefault();
-    clearGallery();
 
-    const input= e.target.elements.search.value;
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  clearGallery();
 
-    if(input === ""){
-        iziToast.error({
-            title: "Error",
-            message: 'Please enter a search query.',
-            position: "topLeft",
-        })
-        return;
-    }
+  const input = e.target.elements.search.value;
 
-    showLoader();
 
-    createList(input)
+  if (input === '') {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please enter a search query.',
+      position: 'topRight',
+    })
+    return;
+  };
+  showLoader();
+
+  
+  fetchImages(input)
     .then(images => {
       if (images.length === 0) {
         iziToast.warning({
@@ -33,7 +39,7 @@ form.addEventListener('submit', e =>{
         });
         return;
       }
-      pullImgs(images);
+      renderImages(images);
     })
     .catch(error => {
       iziToast.error({
